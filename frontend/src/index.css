@@ -9,6 +9,7 @@
   --hover: #ff8000;
   --alert: #2020a0;
   --danger: #a02020;
+  --danger2: #e84040;
   --sucess: #20a020;
   --background1: #ffe0e0;
 }
@@ -83,18 +84,26 @@ li {
   margin-top: 1rem;
 }
 
+input,
+select,
+textarea,
 button {
   padding: 1rem;
   border-radius: 0.5rem;
   border: 0.1rem var(--button-color) solid;
-  background-color: var(--white1);
-  cursor: pointer;
   font-size: 1.6rem;
   font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+button {
+  background-color: var(--white1);
+  cursor: pointer;
+}
 
+input:hover,
+select:hover,
+textarea:hover,
 button:hover {
   border-color: var(--gray);
 }
@@ -193,6 +202,12 @@ img.large {
 }
 
 .alert-danger {
-  color: var(--danger);
-  background-color: var(--bakcground1);
+  color: var(--white);
+  background-color: var(--danger2);
+}
+
+/* Product Screen */
+.product-featured img {
+  height: 80vh;
+  object-fit: contain;
 }
