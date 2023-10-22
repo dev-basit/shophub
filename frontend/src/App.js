@@ -21,7 +21,7 @@ function App() {
           </div>
         </header>
         <main>
-          <Route path="/card/:id?" component={CartScreen}></Route>
+          <Route path="/cart/:id?" component={CartScreen}></Route>
           <Route path="/" component={HomeScreen} exact></Route>
           <Route path="/product/:id" component={ProductScreen}></Route>
         </main>

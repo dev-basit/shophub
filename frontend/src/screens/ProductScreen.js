@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { detailsProduct } from "../store/actions/productActions";
+
+import { detailsProduct } from "../store/products";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
-
 import Rating from "../components/Rating";
 
 const ProductScreen = (props) => {
-  const dispatch = useDispatch();
-  const productId = props.match.params.id;
   const [qty, setQty] = useState(1);
-  const productDetails = useSelector((state) => state.productDetails);
-  const { loading, error, product } = productDetails;
+  const dispatch = useDispatch();
+  const { loading, error, product } = useSelector((state) => state.productDetails);
+  const productId = props.match.params.id;
 
   useEffect(() => {
     dispatch(detailsProduct(productId));
@@ -32,8 +31,8 @@ const ProductScreen = (props) => {
         <div>
           <Link to="/">Back to result</Link>
           <div className="row top">
-            <div className="col-2">
-              <img className="large" src={product.image} alt={product.name} />
+            <div className="col-2 product-featured">
+              <img className="product-featured large" src={product.image} alt={product.name} />
             </div>
             <div className="col-1">
               <ul>

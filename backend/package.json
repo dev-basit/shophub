@@ -5,7 +5,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodmeon --watch backend --exec node --experimental-modules backend/server.js"
+    "start": "nodemon --watch backend --exec node --experimental-modules server.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,6 @@
   "devDependencies": {
     "eslint": "^8.13.0",
     "eslint-plugin-react": "^7.29.4",
-    "nodemon": "^2.0.15"
+    "nodemon": "^3.0.1"
   }
 }
