@@ -13,21 +13,20 @@ router.get(
   })
 );
 
+// router.get(
+//   "/seed",
+//   expressAsyncHandler(async (req, res) => {
+//     const createdProducts = await Product.insertMany(data.products);
+//     res.send({ createdProducts });
+//   })
+// );
+
 router.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id);
-
     if (product) res.send(product);
     else res.status(404).send({ message: "Product Not Found for given id." });
-  })
-);
-
-router.get(
-  "/seed",
-  expressAsyncHandler(async (req, res) => {
-    const createdProducts = await Product.insertMany(data.products);
-    res.send({ createdProducts });
   })
 );
 
