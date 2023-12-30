@@ -1,8 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 
-import userRouter from "./routes/users";
-import productRouter from "./routes/product";
+import userRouter from "./routes/users.js";
+import productRouter from "./routes/product.js";
 
 const app = express();
 mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shophub", {
