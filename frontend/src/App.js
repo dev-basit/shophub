@@ -55,14 +55,14 @@ function App() {
           </div>
         </header>
         <main>
-          <Route path="/cart/:id?" component={CartScreen}></Route>
           <Route path="/" component={HomeScreen} exact></Route>
           <Route path="/signin" component={SigninScreen}></Route>
           <Route path="/register" component={RegisterScreen}></Route>
-          <Route path="/shipping" component={ShippingAddressScreen}></Route>
           <Route path="/product/:id" component={ProductScreen}></Route>
+          <Route path="/cart/:id?" component={CartScreen}></Route>
+          <Route path="/shipping" component={ShippingAddressScreen}></Route>
         </main>
-        <footer className="row center">All right reserved!</footer>
+        <footer className="row center">All rights reserved!</footer>
       </div>
     </BrowserRouter>
   );
