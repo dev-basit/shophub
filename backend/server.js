@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import usersRouter from "./routes/users.js";
 import productsRouter from "./routes/product.js";
@@ -11,6 +12,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shophub", {
   useNewUrlParser: true,
@@ -29,5 +31,5 @@ app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
 });
 
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5002;
 app.listen(port, () => console.log(`Server is listening to the port ${port}`));
