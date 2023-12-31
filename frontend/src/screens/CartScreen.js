@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import MessageBox from "../components/MessageBox";
-import { addToCart } from "../store/cart";
+import { addToCart, removeFromCart } from "../store/cart";
 
 const CartScreen = (props) => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -17,7 +17,7 @@ const CartScreen = (props) => {
 
   //
   const removeFromCartHandler = (id) => {
-    // delete action
+    dispatch(removeFromCart(id));
   };
 
   const checkoutHandler = () => {
