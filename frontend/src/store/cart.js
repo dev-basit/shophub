@@ -20,6 +20,12 @@ export const cartReducer = (state = { cartItems: [] }, action) => {
         return { ...state, cartItems: [...state.cartItems, item] };
       }
 
+    case CART_REMOVE_ITEM:
+      return {
+        ...state,
+        cartItems: state.cartItems.filter((x) => x.product !== action.payload),
+      };
+
     case CART_SAVE_SHIPPING_ADDRESS:
       return { ...state, shippingAddress: action.payload };
 
@@ -49,7 +55,7 @@ export const addToCart = (productId, qty) => async (dispatch, getState) => {
   } catch (error) {}
 };
 
-export const removeFromCartHandler = (productId) => (dispatch, getState) => {
+export const removeFromCart = (productId) => (dispatch, getState) => {
   dispatch({ type: CART_REMOVE_ITEM, payload: productId });
   localStorage.setItem("cartItems", JSON.stringify(getState().cart.cartItems));
 };
