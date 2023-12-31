@@ -182,6 +182,21 @@ img.large {
   width: 100%;
 }
 
+/* Form */
+form {
+  max-width: 60rem;
+  margin: 0 auto;
+}
+.form > div {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+}
+.form label {
+  margin: 1rem 0;
+  display: block;
+}
+
 /* Card */
 .card {
   border: 0.1rem var(--white2) solid;
