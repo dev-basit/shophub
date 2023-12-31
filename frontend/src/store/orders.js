@@ -5,6 +5,9 @@ const ORDER_CREATE_REQUEST = "ORDER_CREATE_REQUEST";
 const ORDER_CREATE_SUCCESS = "ORDER_CREATE_SUCCESS";
 const ORDER_CREATE_FAIL = "ORDER_CREATE_FAIL";
 const ORDER_CREATE_RESET = "ORDER_CREATE_RESET";
+const ORDER_DETAILS_REQUEST = "ORDER_DETAILS_REQUEST";
+const ORDER_DETAILS_SUCCESS = "ORDER_DETAILS_SUCCESS";
+const ORDER_DETAILS_FAIL = "ORDER_DETAILS_FAIL";
 
 // Reducer
 export const orderReducer = (state = {}, action) => {
@@ -20,6 +23,22 @@ export const orderReducer = (state = {}, action) => {
 
     case ORDER_CREATE_RESET:
       return {};
+
+    default:
+      return state;
+  }
+};
+
+export const orderDetailsReducer = (state = { loading: true, order: {} }, action) => {
+  switch (action.type) {
+    case ORDER_DETAILS_REQUEST:
+      return { loading: true };
+
+    case ORDER_DETAILS_SUCCESS:
+      return { loading: false, order: action.payload };
+
+    case ORDER_DETAILS_FAIL:
+      return { loading: false, error: action.payload };
 
     default:
       return state;
@@ -53,4 +72,21 @@ export const createOrder = (order) => async (dispatch, getState) => {
 
 export const resetOrders = () => async (dispatch) => {
   dispatch({ type: ORDER_CREATE_RESET });
+};
+
+export const detailsOrder = (orderId) => async (dispatch, getState) => {
+  dispatch({ type: ORDER_DETAILS_REQUEST, payload: orderId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.get(`/api/orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_DETAILS_FAIL, payload: message });
+  }
 };

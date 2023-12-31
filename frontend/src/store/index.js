@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { cartReducer } from "./cart";
 import { productDetailsReducer, productListReducer } from "./products";
 import { userSigninReducer, userRegisterReducer } from "./user";
-import { orderReducer } from "./orders";
+import { orderReducer, orderDetailsReducer } from "./orders";
 
 const initialState = {
   userSignin: {
@@ -26,6 +26,7 @@ const reducer = combineReducers({
   userSignin: userSigninReducer,
   userRegister: userRegisterReducer,
   orderCreate: orderReducer,
+  orderDetails: orderDetailsReducer,
 });
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
