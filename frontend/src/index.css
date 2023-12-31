@@ -245,6 +245,10 @@ form {
 }
 
 /* Alert */
+.loading {
+  display: block !important;
+}
+
 .success {
   color: var(--success);
 }
