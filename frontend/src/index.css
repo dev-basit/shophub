@@ -271,6 +271,11 @@ form {
   background-color: var(--danger2);
 }
 
+.alert-success {
+  color: #20a020;
+  background-color: #eeffe0;
+}
+
 /* Product Screen */
 .product-featured img {
   height: 80vh;

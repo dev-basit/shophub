@@ -1,13 +1,20 @@
 import Axios from "axios";
 import { CART_EMPTY } from "../store/cart";
+import { backend_url } from "../constants/constants";
 
 const ORDER_CREATE_REQUEST = "ORDER_CREATE_REQUEST";
 const ORDER_CREATE_SUCCESS = "ORDER_CREATE_SUCCESS";
 const ORDER_CREATE_FAIL = "ORDER_CREATE_FAIL";
 const ORDER_CREATE_RESET = "ORDER_CREATE_RESET";
+
 const ORDER_DETAILS_REQUEST = "ORDER_DETAILS_REQUEST";
 const ORDER_DETAILS_SUCCESS = "ORDER_DETAILS_SUCCESS";
 const ORDER_DETAILS_FAIL = "ORDER_DETAILS_FAIL";
+
+const ORDER_PAY_REQUEST = "ORDER_PAY_REQUEST";
+const ORDER_PAY_SUCCESS = "ORDER_PAY_SUCCESS";
+const ORDER_PAY_FAIL = "ORDER_PAY_FAIL";
+const ORDER_PAY_RESET = "ORDER_PAY_RESET";
 
 // Reducer
 export const orderReducer = (state = {}, action) => {
@@ -29,7 +36,7 @@ export const orderReducer = (state = {}, action) => {
   }
 };
 
-export const orderDetailsReducer = (state = { loading: true, order: {} }, action) => {
+export const orderDetailsReducer = (state = { loading: true }, action) => {
   switch (action.type) {
     case ORDER_DETAILS_REQUEST:
       return { loading: true };
@@ -45,6 +52,25 @@ export const orderDetailsReducer = (state = { loading: true, order: {} }, action
   }
 };
 
+export const orderPayReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_PAY_REQUEST:
+      return { loading: true };
+
+    case ORDER_PAY_SUCCESS:
+      return { loading: false, success: true };
+
+    case ORDER_PAY_FAIL:
+      return { loading: false, error: action.payload };
+
+    case ORDER_PAY_RESET:
+      return {};
+
+    default:
+      return state;
+  }
+};
+
 // Action Creator
 export const createOrder = (order) => async (dispatch, getState) => {
   dispatch({ type: ORDER_CREATE_REQUEST, payload: order });
@@ -53,7 +79,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
       userSignin: { userInfo },
     } = getState();
 
-    const { data } = await Axios.post("http://localhost:5002" + "/api/orders", order, {
+    const { data } = await Axios.post(backend_url + "/api/orders", order, {
       headers: {
         Authorization: `Bearer ${userInfo.token}`,
       },
@@ -80,7 +106,7 @@ export const detailsOrder = (orderId) => async (dispatch, getState) => {
     userSignin: { userInfo },
   } = getState();
   try {
-    const { data } = await Axios.get(`/api/orders/${orderId}`, {
+    const { data } = await Axios.get(backend_url + `/api/orders/${orderId}`, {
       headers: { Authorization: `Bearer ${userInfo.token}` },
     });
     dispatch({ type: ORDER_DETAILS_SUCCESS, payload: data });
@@ -89,4 +115,25 @@ export const detailsOrder = (orderId) => async (dispatch, getState) => {
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: ORDER_DETAILS_FAIL, payload: message });
   }
+};
+
+export const payOrder = (order, paymentResult) => async (dispatch, getState) => {
+  dispatch({ type: ORDER_PAY_REQUEST, payload: { order, paymentResult } });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = Axios.put(backend_url + `/api/orders/${order._id}/pay`, paymentResult, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: ORDER_PAY_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_PAY_FAIL, payload: message });
+  }
+};
+
+export const orderPayReset = () => async (dispatch) => {
+  dispatch({ type: ORDER_PAY_RESET });
 };
