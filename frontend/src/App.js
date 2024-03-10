@@ -14,6 +14,7 @@ import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import { signout } from "./store/user";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -74,7 +75,7 @@ function App() {
           <Route path="/shipping" component={ShippingAddressScreen}></Route>
           <Route path="/payment" component={PaymentMethodScreen}></Route>
           <Route path="/placeorder" component={PlaceOrderScreen}></Route>
-          <Route path="/profile" component={ProfileScreen}></Route>
+          <PrivateRoute path="/profile" component={ProfileScreen}></PrivateRoute>
           <Route path="/order/:id" component={OrderScreen}></Route>
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
         </main>
