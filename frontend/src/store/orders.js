@@ -11,6 +11,10 @@ const ORDER_DETAILS_REQUEST = "ORDER_DETAILS_REQUEST";
 const ORDER_DETAILS_SUCCESS = "ORDER_DETAILS_SUCCESS";
 const ORDER_DETAILS_FAIL = "ORDER_DETAILS_FAIL";
 
+const ORDER_MINE_LIST_REQUEST = "ORDER_MINE_LIST_REQUEST";
+const ORDER_MINE_LIST_FAIL = "ORDER_MINE_LIST_FAIL";
+const ORDER_MINE_LIST_SUCCESS = "ORDER_MINE_LIST_SUCCESS";
+
 const ORDER_PAY_REQUEST = "ORDER_PAY_REQUEST";
 const ORDER_PAY_SUCCESS = "ORDER_PAY_SUCCESS";
 const ORDER_PAY_FAIL = "ORDER_PAY_FAIL";
@@ -71,6 +75,22 @@ export const orderPayReducer = (state = {}, action) => {
   }
 };
 
+export const orderMineListReducer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_MINE_LIST_REQUEST:
+      return { loading: true };
+
+    case ORDER_MINE_LIST_SUCCESS:
+      return { loading: false, orders: action.payload };
+
+    case ORDER_MINE_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
 // Action Creator
 export const createOrder = (order) => async (dispatch, getState) => {
   dispatch({ type: ORDER_CREATE_REQUEST, payload: order });
@@ -90,8 +110,7 @@ export const createOrder = (order) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ORDER_CREATE_FAIL,
-      payload:
-        error.response && error.response.data.message ? error.response.data.message : error.message,
+      payload: error.response && error.response.data.message ? error.response.data.message : error.message,
     });
   }
 };
@@ -131,6 +150,27 @@ export const payOrder = (order, paymentResult) => async (dispatch, getState) => 
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: ORDER_PAY_FAIL, payload: message });
+  }
+};
+
+export const listOrderMine = () => async (dispatch, getState) => {
+  dispatch({ type: ORDER_MINE_LIST_REQUEST });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+
+  try {
+    const { data } = await Axios.get(backend_url + "/api/orders/mine", {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    });
+
+    dispatch({ type: ORDER_MINE_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_MINE_LIST_FAIL, payload: message });
   }
 };
 
