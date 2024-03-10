@@ -160,7 +160,12 @@ export default function OrderScreen(props) {
                       {errorPay && <MessageBox variant="danger">{errorPay}</MessageBox>}
                       {loadingPay && <LoadingBox></LoadingBox>}
 
-                      <PayPalButton amount={1} onSuccess={successPaymentHandler}></PayPalButton>
+                      {/* Todo: change the onerror */}
+                      <PayPalButton
+                        amount={1}
+                        onSuccess={successPaymentHandler}
+                        onError={successPaymentHandler}
+                      ></PayPalButton>
                     </>
                   )}
                 </li>
