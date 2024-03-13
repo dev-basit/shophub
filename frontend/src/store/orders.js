@@ -20,6 +20,15 @@ const ORDER_PAY_SUCCESS = "ORDER_PAY_SUCCESS";
 const ORDER_PAY_FAIL = "ORDER_PAY_FAIL";
 const ORDER_PAY_RESET = "ORDER_PAY_RESET";
 
+const ORDER_LIST_REQUEST = "ORDER_LIST_REQUEST";
+const ORDER_LIST_SUCCESS = "ORDER_LIST_SUCCESS";
+const ORDER_LIST_FAIL = "ORDER_LIST_FAIL";
+
+const ORDER_DELETE_REQUEST = "ORDER_DELETE_REQUEST";
+const ORDER_DELETE_SUCCESS = "ORDER_DELETE_SUCCESS";
+const ORDER_DELETE_FAIL = "ORDER_DELETE_FAIL";
+export const ORDER_DELETE_RESET = "ORDER_DELETE_RESET";
+
 // Reducer
 export const orderReducer = (state = {}, action) => {
   switch (action.type) {
@@ -86,6 +95,40 @@ export const orderMineListReducer = (state = { orders: [] }, action) => {
     case ORDER_MINE_LIST_FAIL:
       return { loading: false, error: action.payload };
 
+    default:
+      return state;
+  }
+};
+
+export const orderListReducer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_LIST_REQUEST:
+      return { loading: true };
+
+    case ORDER_LIST_SUCCESS:
+      return { loading: false, orders: action.payload };
+
+    case ORDER_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const orderDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_DELETE_REQUEST:
+      return { loading: true };
+
+    case ORDER_DELETE_SUCCESS:
+      return { loading: false, success: true };
+
+    case ORDER_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+
+    case ORDER_DELETE_RESET:
+      return {};
     default:
       return state;
   }
@@ -176,4 +219,39 @@ export const listOrderMine = () => async (dispatch, getState) => {
 
 export const orderPayReset = () => async (dispatch) => {
   dispatch({ type: ORDER_PAY_RESET });
+};
+
+export const listOrders = () => async (dispatch, getState) => {
+  dispatch({ type: ORDER_LIST_REQUEST });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.get(backend_url + "/api/orders", {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    console.log(data);
+    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_LIST_FAIL, payload: message });
+  }
+};
+
+export const deleteOrder = (orderId) => async (dispatch, getState) => {
+  dispatch({ type: ORDER_DELETE_REQUEST, payload: orderId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = Axios.delete(backend_url + `/api/orders/${orderId}`, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: ORDER_DELETE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_DELETE_FAIL, payload: message });
+  }
 };
