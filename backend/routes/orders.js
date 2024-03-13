@@ -83,4 +83,19 @@ router.put(
   })
 );
 
+router.delete(
+  "/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      const deletedOrder = await order.remove();
+      res.send({ message: "Order Deleted Successfully.", order: deletedOrder });
+    } else {
+      res.status(404).send({ message: "Order not found for given id." });
+    }
+  })
+);
+
 export default router;

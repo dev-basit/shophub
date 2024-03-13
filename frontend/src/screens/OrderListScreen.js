@@ -1,25 +1,36 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listOrders } from "../store/orders";
+import { deleteOrder, listOrders, ORDER_DELETE_RESET } from "../store/orders";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 
 export default function OrderListScreen(props) {
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
+  const {
+    loading: loadingDelete,
+    error: errorDelete,
+    success: successDelete,
+  } = useSelector((state) => state.orderDelete);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch({ type: ORDER_DELETE_RESET });
     dispatch(listOrders());
-  }, [dispatch]);
+  }, [dispatch, successDelete]);
 
   const deleteHandler = (order) => {
-    // TODO: delete handler
+    if (window.confirm("Are you sure to delete?")) {
+      dispatch(deleteOrder(order._id));
+    }
   };
 
   return (
     <div>
       <h1>Orders</h1>
+      {loadingDelete && <LoadingBox />}
+      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
+
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
@@ -56,7 +67,7 @@ export default function OrderListScreen(props) {
                   >
                     Details
                   </button>
-                  <button type="button" className="small" onclick={() => deleteHandler(order)}>
+                  <button type="button" className="small" onClick={() => deleteHandler(order)}>
                     Delete
                   </button>
                 </td>
