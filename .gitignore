@@ -30,4 +30,6 @@ package-lock.json
 .env
 .env.*
 
+backend/uploads/
+
 donotadd.txt

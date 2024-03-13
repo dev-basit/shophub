@@ -2,10 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
 
 import usersRouter from "./routes/users.js";
 import productsRouter from "./routes/product.js";
 import ordersRouter from "./routes/orders.js";
+import router from "./routes/uploadRouter.js";
 
 dotenv.config();
 
@@ -20,14 +22,18 @@ mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shophub", {
   useCreateIndex: true,
 });
 
-app.get("/", (req, res) => res.send("Server is ready"));
+// app.get("/", (req, res) => res.send("Server is ready"));
 
+app.use("/api/uploads", router);
 app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
 app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID || "sb");
 });
+
+const __dirname = path.resolve();
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // middleware for handling errors
 app.use((err, req, res, next) => {

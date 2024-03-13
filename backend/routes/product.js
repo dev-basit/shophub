@@ -68,6 +68,21 @@ router.put(
   })
 );
 
+router.delete(
+  "/:id",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      const deletedProduct = await product.remove();
+      res.send({ message: "Product Deleted Successfully.", product: deletedProduct });
+    } else {
+      res.status(404).send({ message: "Product not found for given id." });
+    }
+  })
+);
+
 // router.get(
 //   "/seed",
 //   expressAsyncHandler(async (req, res) => {

@@ -10,6 +10,11 @@ const PRODUCT_CREATE_SUCCESS = "PRODUCT_CREATE_SUCCESS";
 const PRODUCT_CREATE_FAIL = "PRODUCT_CREATE_FAIL";
 export const PRODUCT_CREATE_RESET = "PRODUCT_CREATE_RESET";
 
+const PRODUCT_DELETE_REQUEST = "PRODUCT_DELETE_REQUEST";
+const PRODUCT_DELETE_SUCCESS = "PRODUCT_DELETE_SUCCESS";
+const PRODUCT_DELETE_FAIL = "PRODUCT_DELETE_FAIL";
+export const PRODUCT_DELETE_RESET = "PRODUCT_DELETE_RESET";
+
 const PRODUCT_UPDATE_REQUEST = "PRODUCT_UPDATE_REQUEST";
 const PRODUCT_UPDATE_SUCCESS = "PRODUCT_UPDATE_SUCCESS";
 const PRODUCT_UPDATE_FAIL = "PRODUCT_UPDATE_FAIL";
@@ -48,6 +53,25 @@ export const productCreateReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     case PRODUCT_CREATE_RESET:
+      return {};
+
+    default:
+      return state;
+  }
+};
+
+export const productDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case PRODUCT_DELETE_REQUEST:
+      return { loading: true };
+
+    case PRODUCT_DELETE_SUCCESS:
+      return { loading: false, success: true };
+
+    case PRODUCT_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+
+    case PRODUCT_DELETE_RESET:
       return {};
 
     default:
@@ -120,6 +144,24 @@ export const createProduct = () => async (dispatch, getState) => {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: PRODUCT_CREATE_FAIL, payload: message });
+  }
+};
+
+export const deleteProduct = (productId) => async (dispatch, getState) => {
+  dispatch({ type: PRODUCT_DELETE_REQUEST, payload: productId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+
+  try {
+    await axios.delete(backend_url + `/api/products/${productId}`, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: PRODUCT_DELETE_SUCCESS });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: PRODUCT_DELETE_FAIL, payload: message });
   }
 };
 
