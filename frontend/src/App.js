@@ -12,6 +12,7 @@ import RegisterScreen from "./screens/RegisterScreen";
 import ShippingAddressScreen from "./screens/ShippingAddressScreen";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import ProductListScreen from "./screens/ProductListScreen";
+import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderScreen from "./screens/OrderScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import { signout } from "./store/user";
@@ -101,6 +102,7 @@ function App() {
 
           <PrivateRoute path="/profile" component={ProfileScreen}></PrivateRoute>
           <AdminRoute path="/product-list" component={ProductListScreen}></AdminRoute>
+          <Route path="/product/:id/edit" component={ProductEditScreen} exact></Route>
 
           <Route path="/order/:id" component={OrderScreen}></Route>
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
