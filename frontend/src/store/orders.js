@@ -20,6 +20,10 @@ const ORDER_PAY_SUCCESS = "ORDER_PAY_SUCCESS";
 const ORDER_PAY_FAIL = "ORDER_PAY_FAIL";
 const ORDER_PAY_RESET = "ORDER_PAY_RESET";
 
+const ORDER_LIST_REQUEST = "ORDER_LIST_REQUEST";
+const ORDER_LIST_SUCCESS = "ORDER_LIST_SUCCESS";
+const ORDER_LIST_FAIL = "ORDER_LIST_FAIL";
+
 // Reducer
 export const orderReducer = (state = {}, action) => {
   switch (action.type) {
@@ -84,6 +88,22 @@ export const orderMineListReducer = (state = { orders: [] }, action) => {
       return { loading: false, orders: action.payload };
 
     case ORDER_MINE_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const orderListReducer = (state = { orders: [] }, action) => {
+  switch (action.type) {
+    case ORDER_LIST_REQUEST:
+      return { loading: true };
+
+    case ORDER_LIST_SUCCESS:
+      return { loading: false, orders: action.payload };
+
+    case ORDER_LIST_FAIL:
       return { loading: false, error: action.payload };
 
     default:
@@ -176,4 +196,22 @@ export const listOrderMine = () => async (dispatch, getState) => {
 
 export const orderPayReset = () => async (dispatch) => {
   dispatch({ type: ORDER_PAY_RESET });
+};
+
+export const listOrders = () => async (dispatch, getState) => {
+  dispatch({ type: ORDER_LIST_REQUEST });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.get(backend_url + "/api/orders", {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    console.log(data);
+    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_LIST_FAIL, payload: message });
+  }
 };

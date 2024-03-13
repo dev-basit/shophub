@@ -1,7 +1,7 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import Order from "../models/orders.js";
-import { isAuth } from "../utils/utils.js";
+import { isAdmin, isAuth } from "../utils/utils.js";
 
 const router = express.Router();
 
@@ -10,6 +10,16 @@ router.get(
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const orders = await Order.find({ user: req.user._id });
+    res.send(orders);
+  })
+);
+
+router.get(
+  "/",
+  isAuth,
+  isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const orders = await Order.find({}).populate("user", "name");
     res.send(orders);
   })
 );
