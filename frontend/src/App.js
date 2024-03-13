@@ -11,10 +11,12 @@ import SigninScreen from "./screens/SigninScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import ShippingAddressScreen from "./screens/ShippingAddressScreen";
 import PlaceOrderScreen from "./screens/PlaceOrderScreen";
+import ProductListScreen from "./screens/ProductListScreen";
 import OrderScreen from "./screens/OrderScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import { signout } from "./store/user";
 import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -74,7 +76,7 @@ function App() {
                     <Link to="/dashboard">Dashboard</Link>
                   </li>
                   <li>
-                    <Link to="/productlist">Products</Link>
+                    <Link to="/product-list">Products</Link>
                   </li>
                   <li>
                     <Link to="/orderlist">Orders</Link>
@@ -91,12 +93,15 @@ function App() {
           <Route path="/" component={HomeScreen} exact></Route>
           <Route path="/signin" component={SigninScreen}></Route>
           <Route path="/register" component={RegisterScreen}></Route>
-          <Route path="/product/:id" component={ProductScreen}></Route>
+          <Route path="/product/:id" component={ProductScreen} exact></Route>
           <Route path="/cart/:id?" component={CartScreen}></Route>
           <Route path="/shipping" component={ShippingAddressScreen}></Route>
           <Route path="/payment" component={PaymentMethodScreen}></Route>
           <Route path="/placeorder" component={PlaceOrderScreen}></Route>
+
           <PrivateRoute path="/profile" component={ProfileScreen}></PrivateRoute>
+          <AdminRoute path="/product-list" component={ProductListScreen}></AdminRoute>
+
           <Route path="/order/:id" component={OrderScreen}></Route>
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
         </main>
