@@ -18,7 +18,7 @@ const ORDER_MINE_LIST_SUCCESS = "ORDER_MINE_LIST_SUCCESS";
 const ORDER_PAY_REQUEST = "ORDER_PAY_REQUEST";
 const ORDER_PAY_SUCCESS = "ORDER_PAY_SUCCESS";
 const ORDER_PAY_FAIL = "ORDER_PAY_FAIL";
-const ORDER_PAY_RESET = "ORDER_PAY_RESET";
+export const ORDER_PAY_RESET = "ORDER_PAY_RESET";
 
 const ORDER_LIST_REQUEST = "ORDER_LIST_REQUEST";
 const ORDER_LIST_SUCCESS = "ORDER_LIST_SUCCESS";
@@ -28,6 +28,11 @@ const ORDER_DELETE_REQUEST = "ORDER_DELETE_REQUEST";
 const ORDER_DELETE_SUCCESS = "ORDER_DELETE_SUCCESS";
 const ORDER_DELETE_FAIL = "ORDER_DELETE_FAIL";
 export const ORDER_DELETE_RESET = "ORDER_DELETE_RESET";
+
+const ORDER_DELIVER_REQUEST = "ORDER_DELIVER_REQUEST";
+const ORDER_DELIVER_SUCCESS = "ORDER_DELIVER_SUCCESS";
+const ORDER_DELIVER_FAIL = "ORDER_DELIVER_FAIL";
+export const ORDER_DELIVER_RESET = "ORDER_DELIVER_RESET";
 
 // Reducer
 export const orderReducer = (state = {}, action) => {
@@ -128,6 +133,24 @@ export const orderDeleteReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     case ORDER_DELETE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const orderDeliverReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ORDER_DELIVER_REQUEST:
+      return { loading: true };
+
+    case ORDER_DELIVER_SUCCESS:
+      return { loading: false, success: true };
+
+    case ORDER_DELIVER_FAIL:
+      return { loading: false, error: action.payload };
+
+    case ORDER_DELIVER_RESET:
       return {};
     default:
       return state;
@@ -253,5 +276,26 @@ export const deleteOrder = (orderId) => async (dispatch, getState) => {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: ORDER_DELETE_FAIL, payload: message });
+  }
+};
+
+export const deliverOrder = (orderId) => async (dispatch, getState) => {
+  dispatch({ type: ORDER_DELIVER_REQUEST, payload: orderId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.put(
+      backend_url + `/api/orders/deliver-order/${orderId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      }
+    );
+    dispatch({ type: ORDER_DELIVER_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: ORDER_DELIVER_FAIL, payload: message });
   }
 };
