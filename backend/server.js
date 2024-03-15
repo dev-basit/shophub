@@ -35,6 +35,10 @@ app.get("/api/config/paypal", (req, res) => {
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
+// TODO: change this if you want to deploy frontend and backend separately
+app.use(express.static(path.join(__dirname, "/frontend/build")));
+app.get("*", (req, res) => res.sendFile(path.join(__dirname, "/frontend/build/index.html")));
+
 // middleware for handling errors
 app.use((err, req, res, next) => {
   res.status(500).send({ message: err.message });
