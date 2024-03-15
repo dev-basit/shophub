@@ -30,6 +30,13 @@ package-lock.json
 .env
 .env.*
 
+/frotnend/.env
+/frontend/.env.*
+
+/backend/.env
+/backend/.env.*
+
+
 backend/uploads/
 
 donotadd.txt
