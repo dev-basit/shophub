@@ -23,6 +23,11 @@ const USER_LIST_REQUEST = "USER_LIST_REQUEST";
 const USER_LIST_SUCCESS = "USER_LIST_SUCCESS";
 const USER_LIST_FAIL = "USER_LIST_FAIL";
 
+const USER_DELETE_REQUEST = "USER_DELETE_REQUEST";
+const USER_DELETE_SUCCESS = "USER_DELETE_SUCCESS";
+const USER_DELETE_FAIL = "USER_DELETE_FAIL";
+const USER_DELETE_RESET = "USER_DELETE_RESET";
+
 // Reducers
 export const userSigninReducer = (state = {}, action) => {
   switch (action.type) {
@@ -97,6 +102,25 @@ export const userListReducer = (state = { loading: true }, action) => {
 
     case USER_LIST_FAIL:
       return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const userDeleteReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_DELETE_REQUEST:
+      return { loading: true };
+
+    case USER_DELETE_SUCCESS:
+      return { loading: false, success: true };
+
+    case USER_DELETE_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_DELETE_RESET:
+      return {};
 
     default:
       return state;
@@ -200,5 +224,22 @@ export const listUsers = () => async (dispatch, getState) => {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: USER_LIST_FAIL, payload: message });
+  }
+};
+
+export const deleteUser = (userId) => async (dispatch, getState) => {
+  dispatch({ type: USER_DELETE_REQUEST, payload: userId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.delete(backend_url + `/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: USER_DELETE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: USER_DELETE_FAIL, payload: message });
   }
 };
