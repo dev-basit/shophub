@@ -16,6 +16,8 @@ import ProductEditScreen from "./screens/ProductEditScreen";
 import OrderScreen from "./screens/OrderScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
+import UserListScreen from "./screens/UserListScreen";
+
 import { signout } from "./store/user";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -106,8 +108,9 @@ function App() {
           <Route path="/product/:id/edit" component={ProductEditScreen} exact></Route>
 
           <Route path="/order/:id" component={OrderScreen}></Route>
-          <AdminRoute path="/order-list" component={OrderListScreen}></AdminRoute>
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
+          <AdminRoute path="/order-list" component={OrderListScreen}></AdminRoute>
+          <AdminRoute path="/userlist" component={UserListScreen}></AdminRoute>
         </main>
         <footer className="row center">All rights reserved!</footer>
       </div>
