@@ -30,10 +30,10 @@ export default function ProductListScreen(props) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (successCreate) {
-      dispatch({ type: PRODUCT_CREATE_RESET });
-      props.history.push(`/product/${createdProduct._id}/edit`);
-    }
+    // if (successCreate) {
+    //   dispatch({ type: PRODUCT_CREATE_RESET });
+    //   props.history.push(`/product/${createdProduct._id}/edit`);
+    // }
 
     if (successDelete) {
       dispatch({ type: PRODUCT_DELETE_RESET });
@@ -58,7 +58,8 @@ export default function ProductListScreen(props) {
     <div>
       <div className="row">
         <h1>Products</h1>
-        <button type="button" className="primary" onClick={createHandler}>
+        {/* <button type="button" className="primary" onClick={createHandler}> */}
+        <button type="button" className="primary" onClick={() => props.history.push(`/create-product`)}>
           Create Product
         </button>
       </div>

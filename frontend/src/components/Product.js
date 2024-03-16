@@ -14,9 +14,14 @@ export default function product(props) {
         <Link to={`/product/${product._id}`}>
           <h2>{product.name}</h2>
         </Link>
-        <Rating rating={product.rating} numReviews={product.numReviews} />
+        <Rating rating={product.rating || "N/A"} numReviews={product.numReviews || 0} />
 
-        <div className="price">${product.price}</div>
+        <div className="row">
+          <div className="price">${product.price}</div>
+          <div>
+            <Link to={`/seller/${product.seller._id}`}>{product.seller.name}</Link>
+          </div>
+        </div>
       </div>
     </div>
   );
