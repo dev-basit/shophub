@@ -17,6 +17,7 @@ import OrderScreen from "./screens/OrderScreen";
 import OrderListScreen from "./screens/OrderListScreen";
 import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import UserListScreen from "./screens/UserListScreen";
+import UserEditScreen from "./screens/UserEditScreen";
 
 import { signout } from "./store/user";
 import PrivateRoute from "./components/PrivateRoute";
@@ -111,6 +112,7 @@ function App() {
           <Route path="/orderhistory" component={OrderHistoryScreen}></Route>
           <AdminRoute path="/order-list" component={OrderListScreen}></AdminRoute>
           <AdminRoute path="/userlist" component={UserListScreen}></AdminRoute>
+          <AdminRoute path="/user/edit/:id" component={UserEditScreen}></AdminRoute>
         </main>
         <footer className="row center">All rights reserved!</footer>
       </div>

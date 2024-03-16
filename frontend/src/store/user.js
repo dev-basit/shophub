@@ -10,14 +10,22 @@ const USER_REGISTER_REQUEST = "USER_REGISTER_REQUEST";
 const USER_REGISTER_SUCCESS = "USER_REGISTER_SUCCESS";
 const USER_REGISTER_FAIL = "USER_REGISTER_FAIL";
 
-const USER_DETAILS_FAIL = "USER_DETAILS_FAIL";
 const USER_DETAILS_REQUEST = "USER_DETAILS_REQUEST";
 const USER_DETAILS_SUCCESS = "USER_DETAILS_SUCCESS";
+const USER_DETAILS_FAIL = "USER_DETAILS_FAIL";
+export const USER_DETAILS_RESET = "USER_DETAILS_RESET";
 
+//self update/edit profile for all users
 const USER_UPDATE_PROFILE_FAIL = "USER_UPDATE_PROFILE_FAIL";
 const USER_UPDATE_PROFILE_REQUEST = "USER_UPDATE_PROFILE_REQUEST";
 const USER_UPDATE_PROFILE_SUCCESS = "USER_UPDATE_PROFILE_SUCCESS";
 export const USER_UPDATE_PROFILE_RESET = "USER_UPDATE_PROFILE_RESET";
+
+// for admin, admin can update/edit any user
+const USER_UPDATE_REQUEST = "USER_UPDATE_REQUEST";
+const USER_UPDATE_SUCCESS = "USER_UPDATE_SUCCESS";
+const USER_UPDATE_FAIL = "USER_UPDATE_FAIL";
+export const USER_UPDATE_RESET = "USER_UPDATE_RESET";
 
 const USER_LIST_REQUEST = "USER_LIST_REQUEST";
 const USER_LIST_SUCCESS = "USER_LIST_SUCCESS";
@@ -68,6 +76,9 @@ export const userDetailsReducer = (state = { loading: true }, action) => {
     case USER_DETAILS_FAIL:
       return { loading: false, error: action.payload };
 
+    case USER_DETAILS_RESET:
+      return { loading: true };
+
     default:
       return state;
   }
@@ -85,6 +96,25 @@ export const userUpdateProfileReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
 
     case USER_UPDATE_PROFILE_RESET:
+      return {};
+
+    default:
+      return state;
+  }
+};
+
+export const userUpdateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_REQUEST:
+      return { loading: true };
+
+    case USER_UPDATE_SUCCESS:
+      return { loading: false, success: true };
+
+    case USER_UPDATE_FAIL:
+      return { loading: false, error: action.payload };
+
+    case USER_UPDATE_RESET:
       return {};
 
     default:
@@ -166,7 +196,7 @@ export const signout = () => (dispatch) => {
   localStorage.clear();
   dispatch({ type: USER_SIGNOUT });
   window.location = "signin";
-  // document.location.location.href = '/signin';
+  // document.location.href = '/signin';
 };
 
 export const detailsUser = (userId) => async (dispatch, getState) => {
@@ -187,6 +217,7 @@ export const detailsUser = (userId) => async (dispatch, getState) => {
   }
 };
 
+//self update/edit profile for all users
 export const updateUserProfile = (user) => async (dispatch, getState) => {
   dispatch({ type: USER_UPDATE_PROFILE_REQUEST, payload: user });
   const {
@@ -205,6 +236,24 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: USER_UPDATE_PROFILE_FAIL, payload: message });
+  }
+};
+
+// for admin, admin can update/edit any user
+export const updateUser = (user) => async (dispatch, getState) => {
+  dispatch({ type: USER_UPDATE_PROFILE_REQUEST, payload: user });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.put(backend_url + `/api/users/${user._id}`, user, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+    dispatch({ type: USER_UPDATE_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: USER_UPDATE_FAIL, payload: message });
   }
 };
 
