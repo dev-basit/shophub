@@ -1,7 +1,7 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import Product from "../models/products.js";
-import { isAdmin, isAuth } from "../utils/utils.js";
+import { isAdmin, isAuth, isSellerOrAdmin } from "../utils/utils.js";
 // import data from "../constants/data.js";
 
 const router = express.Router();
@@ -9,7 +9,9 @@ const router = express.Router();
 router.get(
   "/",
   expressAsyncHandler(async (req, res) => {
-    const products = await Product.find({});
+    const filters = {};
+    if (req.query.seller) filters["seller"] = req.query.seller;
+    const products = await Product.find(filters);
     res.send(products);
   })
 );
@@ -26,10 +28,11 @@ router.get(
 router.post(
   "/",
   isAuth,
-  isAdmin,
+  isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
     const productToAdd = new Product({
       name: "Product-name " + Date.now(),
+      seller: req.user._id,
       image: "/images/p1.jpg",
       price: 0,
       category: "Product-category",
@@ -48,7 +51,7 @@ router.post(
 router.put(
   "/:id",
   isAuth,
-  isAdmin,
+  isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
     const productId = req.params.id;
     const product = await Product.findById(productId);
