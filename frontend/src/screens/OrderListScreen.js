@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteOrder, listOrders, ORDER_DELETE_RESET } from "../store/orders";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
+import { isSellerMode } from "../utils/functions";
 
 export default function OrderListScreen(props) {
+  const [sellerMode, setSellerMode] = useState(isSellerMode(props));
+  const { userInfo } = useSelector((state) => state.userSignin);
   const orderList = useSelector((state) => state.orderList);
   const { loading, error, orders } = orderList;
   const {
@@ -16,8 +19,11 @@ export default function OrderListScreen(props) {
 
   useEffect(() => {
     dispatch({ type: ORDER_DELETE_RESET });
-    dispatch(listOrders());
-  }, [dispatch, successDelete]);
+
+    const filters = {};
+    if (isSellerMode(props)) filters["seller"] = userInfo._id;
+    dispatch(listOrders(filters));
+  }, [dispatch, sellerMode, successDelete, userInfo._id]);
 
   const deleteHandler = (order) => {
     if (window.confirm("Are you sure to delete?")) {

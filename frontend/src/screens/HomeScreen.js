@@ -11,7 +11,7 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(listProducts());
+    dispatch(listProducts({}));
   }, [dispatch]);
 
   return (

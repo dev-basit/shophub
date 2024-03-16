@@ -1,6 +1,7 @@
 import Axios from "axios";
 import { CART_EMPTY } from "../store/cart";
 import { backend_url } from "../constants/constants";
+import { handleQueryParams } from "../utils/functions";
 
 const ORDER_CREATE_REQUEST = "ORDER_CREATE_REQUEST";
 const ORDER_CREATE_SUCCESS = "ORDER_CREATE_SUCCESS";
@@ -244,23 +245,27 @@ export const orderPayReset = () => async (dispatch) => {
   dispatch({ type: ORDER_PAY_RESET });
 };
 
-export const listOrders = () => async (dispatch, getState) => {
-  dispatch({ type: ORDER_LIST_REQUEST });
-  const {
-    userSignin: { userInfo },
-  } = getState();
-  try {
-    const { data } = await Axios.get(backend_url + "/api/orders", {
-      headers: { Authorization: `Bearer ${userInfo.token}` },
-    });
-    console.log(data);
-    dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    const message =
-      error.response && error.response.data.message ? error.response.data.message : error.message;
-    dispatch({ type: ORDER_LIST_FAIL, payload: message });
-  }
-};
+export const listOrders =
+  (queryParams = {}) =>
+  async (dispatch, getState) => {
+    try {
+      dispatch({ type: ORDER_LIST_REQUEST });
+      const {
+        userSignin: { userInfo },
+      } = getState();
+
+      let filters = handleQueryParams(queryParams);
+      const { data } = await Axios.get(backend_url + "/api/orders?" + filters, {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      });
+      console.log(data);
+      dispatch({ type: ORDER_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      const message =
+        error.response && error.response.data.message ? error.response.data.message : error.message;
+      dispatch({ type: ORDER_LIST_FAIL, payload: message });
+    }
+  };
 
 export const deleteOrder = (orderId) => async (dispatch, getState) => {
   dispatch({ type: ORDER_DELETE_REQUEST, payload: orderId });

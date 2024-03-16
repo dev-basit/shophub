@@ -1,5 +1,6 @@
 import axios from "axios";
 import { backend_url } from "../constants/constants";
+import { handleQueryParams } from "../utils/functions";
 
 const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST";
 const PRODUCT_LIST_SUCCESS = "PRODUCT_LIST_SUCCESS";
@@ -115,16 +116,20 @@ export const productDetailsReducer = (state = { loading: true }, action) => {
 };
 
 // Action  Creators
-export const listProducts = () => async (dispatch) => {
-  dispatch({ type: PRODUCT_LIST_REQUEST });
+export const listProducts =
+  (queryParams = {}) =>
+  async (dispatch) => {
+    try {
+      dispatch({ type: PRODUCT_LIST_REQUEST });
 
-  try {
-    const { data } = await axios.get(backend_url + "/api/products");
-    dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
-  } catch (error) {
-    dispatch({ type: PRODUCT_LIST_FAIL, payload: error.message });
-  }
-};
+      let filters = handleQueryParams(queryParams);
+      const { data } = await axios.get(backend_url + "/api/products?" + filters);
+
+      dispatch({ type: PRODUCT_LIST_SUCCESS, payload: data });
+    } catch (error) {
+      dispatch({ type: PRODUCT_LIST_FAIL, payload: error.message });
+    }
+  };
 
 export const createProduct = () => async (dispatch, getState) => {
   dispatch({ type: PRODUCT_CREATE_REQUEST });

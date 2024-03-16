@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUser, listUsers } from "../store/user";
+import { deleteUser, listUsers, USER_DETAILS_RESET } from "../store/user";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 
-export default function UserListScreen() {
+export default function UserListScreen(props) {
   const userList = useSelector((state) => state.userList);
   const { loading, error, users } = userList;
   const { userInfo, user } = useSelector((state) => state.userSignin);
@@ -18,12 +18,13 @@ export default function UserListScreen() {
 
   useEffect(() => {
     dispatch(listUsers());
+    dispatch({
+      type: USER_DETAILS_RESET,
+    });
   }, [dispatch, successDelete]);
 
   const deleteHandler = (user) => {
-    if (window.confirm("Are you sure?")) {
-      dispatch(deleteUser(user._id));
-    }
+    if (window.confirm("Are you sure?")) dispatch(deleteUser(user._id));
   };
 
   return (
@@ -58,7 +59,11 @@ export default function UserListScreen() {
                 <td>{user.isSeller ? "YES" : " NO"}</td>
                 <td>{user.isAdmin ? "YES" : "NO"}</td>
                 <td>
-                  <button type="button" className="small">
+                  <button
+                    type="button"
+                    className="small"
+                    onClick={() => props.history.push(`/user/edit/${user._id}`)}
+                  >
                     Edit
                   </button>
                   <button
