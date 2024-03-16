@@ -2,10 +2,10 @@ export function handleQueryParams(queryParams) {
   let filters = "";
 
   for (let item in queryParams) {
-    filters += item + queryParams[item] + "&";
+    filters += item + "=" + queryParams[item] + "&";
   }
 
-  return filters;
+  return filters.slice(0, filters.length - 1);
 }
 
 export function isSellerMode(props) {
