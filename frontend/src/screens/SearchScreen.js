@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
+import LoadingBox from "../components/common/LoadingBox";
+import MessageBox from "../components/common/MessageBox";
 import Product from "../components/Product";
 import { listProducts } from "../store/products";
 

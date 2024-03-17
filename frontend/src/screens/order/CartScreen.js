@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import MessageBox from "../components/MessageBox";
-import { addToCart, removeFromCart } from "../store/cart";
+import MessageBox from "../../components/common/MessageBox";
+import { addToCart, removeFromCart } from "../../store/cart";
 
 const CartScreen = (props) => {
   const { cartItems } = useSelector((state) => state.cart);

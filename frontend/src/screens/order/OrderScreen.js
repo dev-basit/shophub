@@ -11,10 +11,10 @@ import {
   orderPayReset,
   payOrder,
   ORDER_PAY_RESET,
-} from "../store/orders";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import { backend_url } from "../constants/constants";
+} from "../../store/orders";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { backend_url } from "../../constants/constants";
 
 export default function OrderScreen(props) {
   const [sdkReady, setSdkReady] = useState(false);

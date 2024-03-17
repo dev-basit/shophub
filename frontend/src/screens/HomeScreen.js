@@ -7,8 +7,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { listTopSellers } from "../store/user";
 import { listProducts } from "../store/products";
 import Product from "../components/Product";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
+import LoadingBox from "../components/common/LoadingBox";
+import MessageBox from "../components/common/MessageBox";
 
 export default function HomeScreen() {
   const { loading, error, products } = useSelector((state) => state.productList);
