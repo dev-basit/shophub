@@ -198,6 +198,11 @@ img.large {
   width: 100%;
 }
 
+/* Carousel */
+.carousel .slide img {
+  max-width: 30rem;
+}
+
 /* Form */
 form {
   max-width: 60rem;
