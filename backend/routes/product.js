@@ -10,15 +10,33 @@ const router = express.Router();
 router.get(
   "/",
   expressAsyncHandler(async (req, res) => {
-    const filters = { ...req.query };
+    const filters = {};
     if (req.query.name) filters["name"] = { $regex: req.query.name, $options: "i" };
+
     if (req.query.category) {
       const category = await ProductCategory.findOne({ name: req.query.category });
       if (!category) return res.status(404).json({ message: "Category not found fo given name." });
       filters["category"] = category._id;
     }
 
-    const products = await Product.find(filters).populate("seller category");
+    if (req.query.min && req.query.max)
+      filters["price"] = { $gte: Number(req.query.min), $lte: Number(req.query.max) };
+
+    if (req.query.rating) filters["rating"] = { $gte: req.query.rating };
+
+    let sortOrder = {};
+    if (req.query.order) {
+      sortOrder =
+        req.query.order === "lowest"
+          ? { price: 1 }
+          : req.query.order === "highest"
+          ? { price: -1 }
+          : req.query.order === "toprated"
+          ? { rating: -1 }
+          : { _id: -1 };
+    }
+
+    const products = await Product.find(filters).populate("seller category").sort(sortOrder);
     res.send(products);
   })
 );
