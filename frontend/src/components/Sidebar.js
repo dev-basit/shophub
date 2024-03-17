@@ -108,6 +108,17 @@ function Sidebar({ showSidebar, setShowSidebar }) {
             ))}
           </ul>
         </div>
+
+        <button
+          type="button"
+          className="primary"
+          onClick={() => {
+            history.push("");
+            setShowSidebar(false);
+          }}
+        >
+          Clear Filters
+        </button>
       </div>
     </aside>
   );
