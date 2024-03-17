@@ -36,7 +36,16 @@ router.get(
           : { _id: -1 };
     }
 
-    const products = await Product.find(filters).populate("seller category").sort(sortOrder);
+    // pagination
+    const pageSize = Number(req.query.pageSize) || 10;
+    const page = Number(req.query.pageNumber) || 1;
+
+    const products = await Product.find(filters)
+      .populate("seller category")
+      .sort(sortOrder)
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+
     res.send(products);
   })
 );
