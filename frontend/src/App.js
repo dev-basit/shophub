@@ -21,6 +21,7 @@ import UserListScreen from "./screens/user/UserListScreen";
 import UserEditScreen from "./screens/user/UserEditScreen";
 import SellerScreen from "./screens/user/SellerScreen";
 import SearchScreen from "./screens/SearchScreen";
+import MapScreen from "./screens/MapScreen";
 
 import PrivateRoute from "./components/routes/PrivateRoute";
 import AdminRoute from "./components/routes/AdminRoute";
@@ -139,6 +140,7 @@ function App() {
           <Route path="/placeorder" component={PlaceOrderScreen}></Route>
 
           <PrivateRoute path="/profile" component={ProfileScreen}></PrivateRoute>
+          <PrivateRoute path="/map" component={MapScreen}></PrivateRoute>
           <AdminRoute path="/product-list" component={ProductListScreen} exact></AdminRoute>
           <PrivateRoute path="/product/:id/edit" component={ProductEditScreen} exact></PrivateRoute>
           <PrivateRoute path="/create-product" component={ProductCreateScreen} exact></PrivateRoute>

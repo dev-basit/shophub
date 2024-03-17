@@ -21,6 +21,8 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       postalCode: { type: String, required: true },
       country: { type: String, required: true },
+      lat: Number,
+      lng: Number, // TODO: refactored this, make it required or something else needed
     },
     paymentMethod: { type: String, required: true },
     paymentResult: {

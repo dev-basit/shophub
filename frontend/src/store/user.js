@@ -40,6 +40,8 @@ const USER_TOPSELLERS_LIST_REQUEST = "USER_TOPSELLERS_LIST_REQUEST";
 const USER_TOPSELLERS_LIST_SUCCESS = "USER_TOPSELLERS_LIST_SUCCESS";
 const USER_TOPSELLERS_LIST_FAIL = "USER_TOPSELLERS_LIST_FAIL";
 
+export const USER_ADDRESS_MAP_CONFIRM = "USER_ADDRESS_MAP_CONFIRM";
+
 // Reducers
 export const userSigninReducer = (state = {}, action) => {
   switch (action.type) {
@@ -161,6 +163,17 @@ export const userDeleteReducer = (state = {}, action) => {
   }
 };
 
+export const userAddressMapReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_ADDRESS_MAP_CONFIRM:
+      return { address: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+// Action Creators
 export const userTopSellerListReducer = (state = { loading: true }, action) => {
   switch (action.type) {
     case USER_TOPSELLERS_LIST_REQUEST:
