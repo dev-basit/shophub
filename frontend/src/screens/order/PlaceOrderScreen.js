@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import CheckoutSteps from "../components/CheckoutSteps";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import { createOrder, resetOrders } from "../store/orders";
+import CheckoutSteps from "../../components/common/CheckoutSteps";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { createOrder, resetOrders } from "../../store/orders";
 
 export default function PlaceOrderScreen(props) {
   const cart = useSelector((state) => state.cart);

@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { listProducts } from "../store/products";
-import { detailsUser } from "../store/user";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import Product from "../components/Product";
-import Rating from "../components/Rating";
+import { listProducts } from "../../store/products";
+import { detailsUser } from "../../store/user";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import Product from "../../components/Product";
+import Rating from "../../components/Rating";
 
 export default function SellerScreen(props) {
   const sellerId = props.match.params.id;

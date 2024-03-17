@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { detailsUser, updateUser, USER_UPDATE_RESET } from "../store/user";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
+import { detailsUser, updateUser, USER_UPDATE_RESET } from "../../store/user";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
 
 export default function UserEditScreen(props) {
   const userId = props.match.params.id;

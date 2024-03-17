@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteOrder, listOrders, ORDER_DELETE_RESET } from "../store/orders";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import { isSellerMode } from "../utils/functions";
+import { deleteOrder, listOrders, ORDER_DELETE_RESET } from "../../store/orders";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { isSellerMode } from "../../utils/functions";
 
 export default function OrderListScreen(props) {
   const [sellerMode, setSellerMode] = useState(isSellerMode(props));

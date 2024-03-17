@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 
-import { detailsProduct, updateProduct, PRODUCT_UPDATE_RESET } from "../store/products";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
+import { createProduct } from "../../store/products";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { uploadImage } from "../../services/imageService";
 
-export default function ProductEditScreen(props) {
-  const productId = props.match.params.id;
+export default function ProductCreateScreen(props) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
@@ -17,41 +16,38 @@ export default function ProductEditScreen(props) {
   const [description, setDescription] = useState("");
 
   const [loadingUpload, setLoadingUpload] = useState(false);
+  const [uploadSameFileAgainHack, setUploadSameFileAgainHack] = useState(1);
   const [errorUpload, setErrorUpload] = useState("");
 
-  const { loading, error, product } = useSelector((state) => state.productDetails);
+  const { loading, success, error, product } = useSelector((state) => state.productCreate);
   const { userInfo } = useSelector((state) => state.userSignin);
-  const {
-    loading: loadingUpdate,
-    error: errorUpdate,
-    success: successUpdate,
-  } = useSelector((state) => state.productUpdate);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (successUpdate) props.history.push("/product-list");
+  const handleUploadImage = async (e) => {
+    e.preventDefault();
+    setUploadSameFileAgainHack((prev) => prev + 1);
 
-    if (!product || product._id !== productId || successUpdate) {
-      dispatch({ type: PRODUCT_UPDATE_RESET });
-      dispatch(detailsProduct(productId));
-    } else {
-      setName(product.name);
-      setPrice(product.price);
-      setImage(product.image);
-      setCategory(product.category);
-      setCountInStock(product.countInStock);
-      setBrand(product.brand);
-      setDescription(product.description);
-    }
-  }, [product, dispatch, productId, successUpdate, props.history]);
+    let file = e.target.files[0];
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", process.env.REACT_APP_CLOUDINARY_FOLDER);
+
+    try {
+      setLoadingUpload(true);
+      let uploadedImageUrl = await uploadImage(formData);
+      setImage(uploadedImageUrl);
+      setLoadingUpload(false);
+    } catch (error) {}
+  };
 
   const submitHandler = (e) => {
     e.preventDefault();
 
+    // TODO: add schema validation here or in the start of createProduuct action creator
     dispatch(
-      updateProduct({
-        _id: productId,
+      createProduct({
         name,
         price,
         image,
@@ -59,38 +55,39 @@ export default function ProductEditScreen(props) {
         brand,
         countInStock,
         description,
+        seller: userInfo._id, // if you are creating from admin account, then this will not work. in that case create a dropdown and show all the seller, and select a sledt for whcih you want to create product.
       })
     );
+
+    if (!error) window.location = "/";
   };
 
-  const uploadFileHandler = async (e) => {
-    const file = e.target.files[0];
-    const bodyFormData = new FormData();
-    bodyFormData.append("image", file);
-    setLoadingUpload(true);
-    try {
-      const { data } = await axios.post("/api/uploads", bodyFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      });
-      setImage(data);
-      setLoadingUpload(false);
-    } catch (error) {
-      setErrorUpload(error.message);
-      setLoadingUpload(false);
-    }
-  };
+  // const uploadFileHandler = async (e) => {
+  //   const file = e.target.files[0];
+  //   const bodyFormData = new FormData();
+  //   bodyFormData.append("image", file);
+  //   setLoadingUpload(true);
+  //   try {
+  //     const { data } = await axios.post("/api/uploads", bodyFormData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //         Authorization: `Bearer ${userInfo.token}`,
+  //       },
+  //     });
+  // setImageUrl(data);
+  //     setLoadingUpload(false);
+  //   } catch (error) {
+  //     setErrorUpload(error.message);
+  //     setLoadingUpload(false);
+  //   }
+  // };
 
   return (
     <div>
       <form className="form" onSubmit={submitHandler}>
         <div>
-          <h1>Edit Product {productId}</h1>
+          <h1>Create Product</h1>
         </div>
-        {loadingUpdate && <LoadingBox></LoadingBox>}
-        {errorUpdate && <MessageBox variant="danger">{errorUpdate}</MessageBox>}
 
         {loading ? (
           <LoadingBox />
@@ -118,28 +115,24 @@ export default function ProductEditScreen(props) {
                 onChange={(e) => setPrice(e.target.value)}
               ></input>
             </div>
-            <div>
-              <label htmlFor="image">Image</label>
-              <input
-                id="image"
-                type="text"
-                placeholder="Enter image"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-              ></input>
-            </div>
 
             <div>
-              <label htmlFor="imageFile">Image File</label>
+              <div>
+                <div className="row">
+                  <label htmlFor="imageFile">Image</label>
+                  {loadingUpload && <LoadingBox />}
+                  {errorUpload && <MessageBox variant="danger">{errorUpload}</MessageBox>}
+                </div>
+              </div>
               <input
                 type="file"
                 id="imageFile"
                 label="Choose Image"
                 accept="image/*"
-                onChange={uploadFileHandler}
+                key={uploadSameFileAgainHack}
+                // onChange={uploadFileHandler}
+                onChange={handleUploadImage}
               ></input>
-              {loadingUpload && <LoadingBox></LoadingBox>}
-              {errorUpload && <MessageBox variant="danger">{errorUpload}</MessageBox>}
             </div>
 
             <div>
@@ -186,7 +179,7 @@ export default function ProductEditScreen(props) {
             <div>
               <label></label>
               <button className="primary" type="submit">
-                Update
+                Create
               </button>
             </div>
           </>

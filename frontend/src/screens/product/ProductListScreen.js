@@ -6,10 +6,10 @@ import {
   createProduct,
   deleteProduct,
   listProducts,
-} from "../store/products";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import { isSellerMode } from "../utils/functions";
+} from "../../store/products";
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { isSellerMode } from "../../utils/functions";
 
 export default function ProductListScreen(props) {
   const [sellerMode, setSellerMode] = useState(isSellerMode(props));
