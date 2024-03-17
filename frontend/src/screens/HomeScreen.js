@@ -9,6 +9,7 @@ import { listProducts } from "../store/products";
 import Product from "../components/Product";
 import LoadingBox from "../components/common/LoadingBox";
 import MessageBox from "../components/common/MessageBox";
+import { getQueryParams } from "../utils/functions";
 
 export default function HomeScreen() {
   const { loading, error, products } = useSelector((state) => state.productList);
@@ -21,9 +22,10 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    let productFilters = getQueryParams(window.location.search.substring(1));
     dispatch(listTopSellers());
-    dispatch(listProducts({}));
-  }, [dispatch]);
+    dispatch(listProducts(productFilters));
+  }, [dispatch, window.location.search]);
 
   return (
     <div>

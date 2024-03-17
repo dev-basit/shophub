@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter, Link, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,14 +26,14 @@ import PrivateRoute from "./components/routes/PrivateRoute";
 import AdminRoute from "./components/routes/AdminRoute";
 import SellerRoute from "./components/routes/SellerRoute";
 import SearchBox from "./components/common/SearchBox";
+import Sidebar from "./components/Sidebar";
 import { signout } from "./store/user";
 
 function App() {
-  const cart = useSelector((state) => state.cart);
-  const { cartItems } = cart;
+  const [showSidebar, setShowSidebar] = useState(false);
+  const { cartItems } = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.userSignin);
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
   const dispatch = useDispatch();
 
   const signoutHandler = () => {
@@ -45,13 +45,15 @@ function App() {
       <div className="grid-container">
         <header className="row">
           <div>
+            <button type="button" className="open-sidebar" onClick={() => setShowSidebar(true)}>
+              <i className="fa fa-bars"></i>
+            </button>
+
             <Link className="brand" to="/">
               shophub
             </Link>
           </div>
-          <div>
-            <Route render={({ history }) => <SearchBox history={history}></SearchBox>}></Route>
-          </div>
+          <Route render={({ history }) => <SearchBox history={history}></SearchBox>}></Route>
           <div>
             <Link to="/cart">
               Cart
@@ -121,12 +123,15 @@ function App() {
             )}
           </div>
         </header>
+
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+
         <main>
           <Route path="/seller/:id" component={SellerScreen}></Route>
           <Route path="/" component={HomeScreen} exact></Route>
           <Route path="/signin" component={SigninScreen}></Route>
           <Route path="/register" component={RegisterScreen}></Route>
-          <Route path="/search/:name?" component={SearchScreen} exact></Route>
+          <Route path="/search" component={SearchScreen} exact></Route>
           <Route path="/product/:id" component={ProductScreen} exact></Route>
           <Route path="/cart/:id?" component={CartScreen}></Route>
           <Route path="/shipping" component={ShippingAddressScreen}></Route>

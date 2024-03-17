@@ -4,6 +4,7 @@
   --white: #ffffff;
   --white1: #f8f8f8;
   --white2: #c0c0c0;
+  --white3: #efefef;
   --yellow: #f0c040;
   --gray: #404040;
   --hover: #ff8000;
@@ -81,7 +82,7 @@ ul {
 }
 
 li {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 input,
@@ -368,4 +369,56 @@ form {
   border-radius: 0.5rem 0 0 0.5rem;
   border-right: none;
   margin-left: 0.5rem;
+}
+
+/* Aside */
+aside {
+  position: fixed;
+  width: 30rem;
+  height: 100%;
+  background-color: var(--white3);
+  z-index: 10;
+  transform: translateX(-35rem);
+  transition: all 0.5s;
+  padding: 1rem;
+}
+aside.open {
+  transform: translateX(0);
+}
+button.open-sidebar {
+  font-size: 3rem;
+  padding: 0.2rem 0.5rem;
+  margin: 0 0.5rem;
+  background: none;
+  color: var(--white);
+  cursor: pointer;
+}
+button.open-sidebar:hover {
+  border-color: var(--white);
+}
+aside ul {
+  list-style: none;
+  margin: 2rem 0;
+}
+
+aside li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.1rem;
+}
+button.close-sidebar {
+  padding: 0.3rem 0.8rem;
+}
+
+.active {
+  font-weight: bold;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--hover);
 }

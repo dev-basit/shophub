@@ -5,7 +5,8 @@ export default function SearchBox(props) {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    props.history.push(`/search/${name}`);
+    if (name) props.history.push(`?name=${name}`);
+    else props.history.push("?");
   };
 
   return (

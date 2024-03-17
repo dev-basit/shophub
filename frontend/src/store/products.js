@@ -25,6 +25,10 @@ const PRODUCT_DETAILS_REQUEST = "PRODUCT_DETAILS_REQUEST";
 const PRODUCT_DETAILS_SUCCESS = "PRODUCT_DETAILS_SUCCESS";
 const PRODUCT_DETAILS_FAIL = "PRODUCT_DETAILS_FAIL";
 
+const PRODUCT_CATEGORY_LIST_REQUEST = "PRODUCT_CATEGORY_LIST_REQUEST";
+const PRODUCT_CATEGORY_LIST_SUCCESS = "PRODUCT_CATEGORY_LIST_SUCCESS";
+const PRODUCT_CATEGORY_LIST_FAIL = "PRODUCT_CATEGORY_LIST_FAIL";
+
 // Reducers
 export const productListReducer = (state = { loading: true, product: [] }, action) => {
   switch (action.type) {
@@ -35,6 +39,22 @@ export const productListReducer = (state = { loading: true, product: [] }, actio
       return { loading: false, products: action.payload };
 
     case PRODUCT_LIST_FAIL:
+      return { loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
+
+export const productCategoryListReducer = (state = { loading: true, products: [] }, action) => {
+  switch (action.type) {
+    case PRODUCT_CATEGORY_LIST_REQUEST:
+      return { loading: true };
+
+    case PRODUCT_CATEGORY_LIST_SUCCESS:
+      return { loading: false, categories: action.payload };
+
+    case PRODUCT_CATEGORY_LIST_FAIL:
       return { loading: false, error: action.payload };
 
     default:
@@ -130,6 +150,18 @@ export const listProducts =
       dispatch({ type: PRODUCT_LIST_FAIL, payload: error.message });
     }
   };
+
+export const listProductCategories = () => async (dispatch) => {
+  dispatch({
+    type: PRODUCT_CATEGORY_LIST_REQUEST,
+  });
+  try {
+    const { data } = await axios.get(backend_url + `/api/products-categories`);
+    dispatch({ type: PRODUCT_CATEGORY_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({ type: PRODUCT_CATEGORY_LIST_FAIL, payload: error.message });
+  }
+};
 
 export const createProduct = (payload) => async (dispatch, getState) => {
   try {

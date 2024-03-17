@@ -10,7 +10,7 @@ export default function ProductCreateScreen(props) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(""); // TODO: change catehroy to dropdown, hit request to get list of categories
   const [countInStock, setCountInStock] = useState("");
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
@@ -51,7 +51,8 @@ export default function ProductCreateScreen(props) {
         name,
         price,
         image,
-        category,
+        // category, // TODO: change catehroy to dropdown, hit request to get list of categories
+        category: "65f688831f54cd6ff986371f", // hat catehory , hardcoded // TODO: change catehroy to dropdown, hit request to get list of categories // hardcoding now
         brand,
         countInStock,
         description,
@@ -135,6 +136,7 @@ export default function ProductCreateScreen(props) {
               ></input>
             </div>
 
+            {/* // TODO: change catehroy to dropdown, hit request to get list of categories */}
             <div>
               <label htmlFor="category">Category</label>
               <input
