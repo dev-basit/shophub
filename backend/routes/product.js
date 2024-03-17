@@ -11,10 +11,9 @@ router.get(
   expressAsyncHandler(async (req, res) => {
     // TODO: pass req.query directly to find
     const filters = {};
-    if (req.query.seller) filters["seller"] = req.query.seller;
     if (req.query.name) filters["name"] = { $regex: req.query.name, $options: "i" };
 
-    const products = await Product.find(filters).populate("seller");
+    const products = await Product.find({ ...req.query, ...filters }).populate("seller");
     res.send(products);
   })
 );

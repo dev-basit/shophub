@@ -7,7 +7,8 @@ import path from "path";
 import usersRouter from "./routes/users.js";
 import productsRouter from "./routes/product.js";
 import ordersRouter from "./routes/orders.js";
-import router from "./routes/uploadRouter.js";
+import productCategoryRouter from "./routes/productCategories.js";
+import uploadRouter from "./routes/uploadRouter.js";
 
 dotenv.config();
 
@@ -24,10 +25,11 @@ mongoose.connect(process.env.MONGODB_URL || "mongodb://localhost/shophub", {
 
 // app.get("/", (req, res) => res.send("Server is ready"));
 
-app.use("/api/uploads", router);
+app.use("/api/uploads", uploadRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/orders", ordersRouter);
+app.use("/api/products-categories", productCategoryRouter);
 app.get("/api/config/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID || "sb");
 });
