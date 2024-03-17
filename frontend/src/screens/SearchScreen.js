@@ -1,20 +1,23 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import LoadingBox from "../components/common/LoadingBox";
 import MessageBox from "../components/common/MessageBox";
 import Product from "../components/Product";
 import { listProducts } from "../store/products";
+import { getQueryParams } from "../utils/functions";
 
 export default function SearchScreen(props) {
-  const { name = "" } = useParams();
-  const dispatch = useDispatch();
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
+  const productCategoryList = useSelector((state) => state.productCategoryList);
+  const { loading: loadingCategories, error: errorCategories, categories } = productCategoryList;
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(listProducts({ name }));
+    const productFilters = getQueryParams(window.location.search.substring(1));
+    dispatch(listProducts(productFilters));
   }, [dispatch, name]);
 
   return (
@@ -31,10 +34,22 @@ export default function SearchScreen(props) {
 
       <div className="row top">
         <div className="col-1">
-          <h3>Department</h3>
-          <ul>
-            <li>Categoey 1</li>
-          </ul>
+          {/* <h3>Department</h3> */}
+          {loadingCategories ? (
+            <LoadingBox />
+          ) : errorCategories ? (
+            <MessageBox variant="danger">{errorCategories}</MessageBox>
+          ) : (
+            <ul>
+              {categories.map((item) => (
+                <li key={item._id}>
+                  <Link className={item === category ? "active" : ""} to={`/search?category=${item.name}`}>
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="col-3">
           {loading ? (

@@ -7,8 +7,6 @@ const router = express.Router();
 
 router.get(
   "/",
-  isAuth,
-  isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
     const categories = await ProductCategory.find();
     res.send(categories);

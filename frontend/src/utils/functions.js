@@ -1,3 +1,16 @@
+export function getQueryParams(query) {
+  const queryParams = {};
+  let queryParamsList = "";
+  if (query) queryParamsList = query.split("&");
+
+  for (let i = 0; i < queryParamsList.length; i++) {
+    let pair = queryParamsList[i].split("=");
+    queryParams[pair[0]] = pair[1];
+  }
+
+  return queryParams;
+}
+
 export function handleQueryParams(queryParams) {
   let filters = "";
 

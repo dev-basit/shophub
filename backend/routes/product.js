@@ -2,6 +2,7 @@ import express from "express";
 import expressAsyncHandler from "express-async-handler";
 import Product from "../models/products.js";
 import { isAdmin, isAuth, isSellerOrAdmin } from "../utils/utils.js";
+import ProductCategory from "../models/productCategories.js";
 // import data from "../constants/data.js";
 
 const router = express.Router();
@@ -9,11 +10,15 @@ const router = express.Router();
 router.get(
   "/",
   expressAsyncHandler(async (req, res) => {
-    // TODO: pass req.query directly to find
-    const filters = {};
+    const filters = { ...req.query };
     if (req.query.name) filters["name"] = { $regex: req.query.name, $options: "i" };
+    if (req.query.category) {
+      const category = await ProductCategory.findOne({ name: req.query.category });
+      if (!category) return res.status(404).json({ message: "Category not found fo given name." });
+      filters["category"] = category._id;
+    }
 
-    const products = await Product.find({ ...req.query, ...filters }).populate("seller category");
+    const products = await Product.find(filters).populate("seller category");
     res.send(products);
   })
 );
