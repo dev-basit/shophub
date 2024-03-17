@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
@@ -12,7 +12,8 @@ import MessageBox from "../components/common/MessageBox";
 import { getQueryParams } from "../utils/functions";
 
 export default function HomeScreen() {
-  const { loading, error, products } = useSelector((state) => state.productList);
+  const [filters, setFilters] = useState(() => getQueryParams(window.location.search.substring(1)));
+  const { loading, error, products, page, pages } = useSelector((state) => state.productList);
   const {
     loading: loadingSellers,
     error: errorSellers,
@@ -22,10 +23,10 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    let productFilters = getQueryParams(window.location.search.substring(1));
+    // let productFilters = getQueryParams(window.location.search.substring(1));
     dispatch(listTopSellers());
-    dispatch(listProducts(productFilters));
-  }, [dispatch, window.location.search]);
+    dispatch(listProducts(filters));
+  }, [window.location.search]);
 
   return (
     <div>
@@ -63,6 +64,15 @@ export default function HomeScreen() {
               <Product key={product._id} product={product}></Product>
             ))}
           </div>
+
+          {/* TODO: add pagination next and prev button, add pagesize button */}
+          {/* <div className="row center pagination">
+            {[...Array(pages).keys()].map((x) => (
+              <Link className={x + 1 === page ? "active" : ""} key={x + 1} to={"/"}>
+                {x + 1}
+              </Link>
+            ))}
+          </div> */}
         </>
       )}
     </div>

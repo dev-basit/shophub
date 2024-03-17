@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams, useLocation, useHistory } from "react-router-dom";
+
+import LoadingBox from "../../components/common/LoadingBox";
+import MessageBox from "../../components/common/MessageBox";
+import { getQueryParams, isSellerMode } from "../../utils/functions";
 import {
   PRODUCT_CREATE_RESET,
   PRODUCT_DELETE_RESET,
@@ -7,15 +12,12 @@ import {
   deleteProduct,
   listProducts,
 } from "../../store/products";
-import LoadingBox from "../../components/common/LoadingBox";
-import MessageBox from "../../components/common/MessageBox";
-import { isSellerMode } from "../../utils/functions";
 
 export default function ProductListScreen(props) {
+  const [filters, setFilters] = useState(() => getQueryParams(window.location.search.substring(1)));
   const [sellerMode, setSellerMode] = useState(isSellerMode(props));
   const { userInfo } = useSelector((state) => state.userSignin);
-  const productList = useSelector((state) => state.productList);
-  const { loading, error, products } = productList;
+  const { loading, error, products, page, pages } = useSelector((state) => state.productList);
   const {
     loading: loadingCreate,
     error: errorCreate,
@@ -27,7 +29,24 @@ export default function ProductListScreen(props) {
     error: errorDelete,
     success: successDelete,
   } = useSelector((state) => state.productDelete);
+
+  const { pageNumber = 1, pageSize = 5 } = useParams();
+  const location = useLocation();
+  const history = useHistory();
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const pageNumberParam = queryParams.get("pageNumber");
+    const pageSizeParam = queryParams.get("pageSize");
+
+    if (!pageNumberParam || !pageSizeParam) {
+      queryParams.set("pageNumber", 1);
+      queryParams.set("pageSize", 10);
+      history.push({ search: queryParams.toString() });
+    }
+  }, [location, history]);
 
   useEffect(() => {
     // if (successCreate) {
@@ -39,10 +58,20 @@ export default function ProductListScreen(props) {
       dispatch({ type: PRODUCT_DELETE_RESET });
     }
 
-    const filters = {};
+    // const filters = { pageNumber, pageSize };
     if (sellerMode) filters["seller"] = userInfo._id;
     dispatch(listProducts(filters));
-  }, [createdProduct, dispatch, props.history, sellerMode, successCreate, successDelete, userInfo._id]);
+  }, [
+    createdProduct,
+    dispatch,
+    props.history,
+    sellerMode,
+    successCreate,
+    successDelete,
+    userInfo._id,
+    pageNumber,
+    pageSize,
+  ]);
 
   const deleteHandler = (product) => {
     if (window.confirm("Are you sure to delete?")) {
@@ -75,43 +104,56 @@ export default function ProductListScreen(props) {
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <div className="tableContainer">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>NAME</th>
-                <th>PRICE</th>
-                <th>CATEGORY</th>
-                <th>BRAND</th>
-                <th>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product._id}</td>
-                  <td>{product.name}</td>
-                  <td>{product.price}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="small"
-                      onClick={() => props.history.push(`/product/${product._id}/edit`)}
-                    >
-                      Edit
-                    </button>
-                    <button type="button" className="small" onClick={() => deleteHandler(product)}>
-                      Delete
-                    </button>
-                  </td>
+        <>
+          <div className="tableContainer">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>NAME</th>
+                  <th>PRICE</th>
+                  <th>CATEGORY</th>
+                  <th>BRAND</th>
+                  <th>ACTIONS</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product._id}>
+                    <td>{product._id}</td>
+                    <td>{product.name}</td>
+                    <td>{product.price}</td>
+                    <td>{product.category.name}</td>
+                    <td>{product.brand}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className="small"
+                        onClick={() => props.history.push(`/product/${product._id}/edit`)}
+                      >
+                        Edit
+                      </button>
+                      <button type="button" className="small" onClick={() => deleteHandler(product)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="row center pagination">
+            {[...Array(pages).keys()].map((x) => (
+              <Link
+                className={x + 1 === page ? "active" : ""}
+                key={x + 1}
+                to={`/productlist/pageNumber/${x + 1}`}
+              >
+                {x + 1}
+              </Link>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
