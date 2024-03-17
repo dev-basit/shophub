@@ -13,7 +13,7 @@ router.get(
     const filters = {};
     if (req.query.name) filters["name"] = { $regex: req.query.name, $options: "i" };
 
-    const products = await Product.find({ ...req.query, ...filters }).populate("seller");
+    const products = await Product.find({ ...req.query, ...filters }).populate("seller category");
     res.send(products);
   })
 );
@@ -22,7 +22,7 @@ router.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     // TODO: pass req.query directly to find
-    const product = await Product.findById(req.params.id).populate("seller");
+    const product = await Product.findById(req.params.id).populate("seller category");
     if (product) res.send(product);
     else res.status(404).send({ message: "Product not found for given id." });
   })
