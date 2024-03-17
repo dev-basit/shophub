@@ -36,6 +36,10 @@ const USER_DELETE_SUCCESS = "USER_DELETE_SUCCESS";
 const USER_DELETE_FAIL = "USER_DELETE_FAIL";
 const USER_DELETE_RESET = "USER_DELETE_RESET";
 
+const USER_TOPSELLERS_LIST_REQUEST = "USER_TOPSELLERS_LIST_REQUEST";
+const USER_TOPSELLERS_LIST_SUCCESS = "USER_TOPSELLERS_LIST_SUCCESS";
+const USER_TOPSELLERS_LIST_FAIL = "USER_TOPSELLERS_LIST_FAIL";
+
 // Reducers
 export const userSigninReducer = (state = {}, action) => {
   switch (action.type) {
@@ -151,6 +155,22 @@ export const userDeleteReducer = (state = {}, action) => {
 
     case USER_DELETE_RESET:
       return {};
+
+    default:
+      return state;
+  }
+};
+
+export const userTopSellerListReducer = (state = { loading: true }, action) => {
+  switch (action.type) {
+    case USER_TOPSELLERS_LIST_REQUEST:
+      return { loading: true };
+
+    case USER_TOPSELLERS_LIST_SUCCESS:
+      return { loading: false, users: action.payload };
+
+    case USER_TOPSELLERS_LIST_FAIL:
+      return { loading: false, error: action.payload };
 
     default:
       return state;
@@ -290,5 +310,17 @@ export const deleteUser = (userId) => async (dispatch, getState) => {
     const message =
       error.response && error.response.data.message ? error.response.data.message : error.message;
     dispatch({ type: USER_DELETE_FAIL, payload: message });
+  }
+};
+
+export const listTopSellers = () => async (dispatch) => {
+  try {
+    dispatch({ type: USER_TOPSELLERS_LIST_REQUEST });
+    const { data } = await Axios.get(backend_url + "/api/users/top-sellers");
+    dispatch({ type: USER_TOPSELLERS_LIST_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: USER_TOPSELLERS_LIST_FAIL, payload: message });
   }
 };

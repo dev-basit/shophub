@@ -18,6 +18,17 @@ const router = express.Router();
 // );
 
 router.get(
+  "/top-sellers/",
+  expressAsyncHandler(async (req, res) => {
+    const topSellers = await User.find({ isSeller: true })
+      .select("-password")
+      .sort({ "seller.rating": -1 })
+      .limit(3);
+    res.send(topSellers);
+  })
+);
+
+router.get(
   "/:id",
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);

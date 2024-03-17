@@ -20,11 +20,13 @@ import OrderHistoryScreen from "./screens/OrderHistoryScreen";
 import UserListScreen from "./screens/UserListScreen";
 import UserEditScreen from "./screens/UserEditScreen";
 import SellerScreen from "./screens/SellerScreen";
+import SearchScreen from "./screens/SearchScreen";
 
-import { signout } from "./store/user";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminRoute from "./components/AdminRoute";
 import SellerRoute from "./components/SellerRoute";
+import SearchBox from "./components/SearchBox";
+import { signout } from "./store/user";
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -46,6 +48,9 @@ function App() {
             <Link className="brand" to="/">
               shophub
             </Link>
+          </div>
+          <div>
+            <Route render={({ history }) => <SearchBox history={history}></SearchBox>}></Route>
           </div>
           <div>
             <Link to="/cart">
@@ -121,6 +126,7 @@ function App() {
           <Route path="/" component={HomeScreen} exact></Route>
           <Route path="/signin" component={SigninScreen}></Route>
           <Route path="/register" component={RegisterScreen}></Route>
+          <Route path="/search/:name?" component={SearchScreen} exact></Route>
           <Route path="/product/:id" component={ProductScreen} exact></Route>
           <Route path="/cart/:id?" component={CartScreen}></Route>
           <Route path="/shipping" component={ShippingAddressScreen}></Route>
