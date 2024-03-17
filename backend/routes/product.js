@@ -77,6 +77,35 @@ router.post(
   })
 );
 
+router.post(
+  "/reviews/:id",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const product = await Product.findById(req.params.id);
+    if (product) {
+      if (product.reviews.find((x) => x.name === req.user.name)) {
+        return res.status(400).send({ message: "You already submitted a review" });
+      }
+      const review = {
+        name: req.user.name, // TODO: name is repeated
+        comment: req.body.comment,
+        rating: Number(req.body.rating),
+        user: req.body.user,
+      };
+      product.reviews.push(review);
+      product.numReviews = product.reviews.length;
+      product.rating = product.reviews.reduce((a, c) => c.rating + a, 0) / product.reviews.length;
+      const updatedProduct = await product.save();
+      res.status(201).send({
+        message: "Review Created",
+        review: updatedProduct.reviews[updatedProduct.reviews.length - 1],
+      });
+    } else {
+      res.status(404).send({ message: "Product not found for given id." });
+    }
+  })
+);
+
 router.put(
   "/:id",
   isAuth,

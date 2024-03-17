@@ -29,6 +29,11 @@ const PRODUCT_CATEGORY_LIST_REQUEST = "PRODUCT_CATEGORY_LIST_REQUEST";
 const PRODUCT_CATEGORY_LIST_SUCCESS = "PRODUCT_CATEGORY_LIST_SUCCESS";
 const PRODUCT_CATEGORY_LIST_FAIL = "PRODUCT_CATEGORY_LIST_FAIL";
 
+const PRODUCT_REVIEW_CREATE_REQUEST = "PRODUCT_REVIEW_CREATE_REQUEST";
+const PRODUCT_REVIEW_CREATE_SUCCESS = "PRODUCT_REVIEW_CREATE_SUCCESS";
+const PRODUCT_REVIEW_CREATE_FAIL = "PRODUCT_REVIEW_CREATE_FAIL";
+export const PRODUCT_REVIEW_CREATE_RESET = "PRODUCT_REVIEW_CREATE_RESET";
+
 // Reducers
 export const productListReducer = (state = { loading: true, product: [] }, action) => {
   switch (action.type) {
@@ -135,6 +140,25 @@ export const productDetailsReducer = (state = { loading: true }, action) => {
   }
 };
 
+export const productReviewCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case PRODUCT_REVIEW_CREATE_REQUEST:
+      return { loading: true };
+
+    case PRODUCT_REVIEW_CREATE_SUCCESS:
+      return { loading: false, success: true, review: action.payload };
+
+    case PRODUCT_REVIEW_CREATE_FAIL:
+      return { loading: false, error: action.payload };
+
+    case PRODUCT_REVIEW_CREATE_RESET:
+      return {};
+
+    default:
+      return state;
+  }
+};
+
 // Action  Creators
 export const listProducts =
   (queryParams = {}) =>
@@ -229,5 +253,27 @@ export const detailsProduct = (productId) => async (dispatch) => {
       type: PRODUCT_DETAILS_FAIL,
       payload: error.response && error.response.data.message ? error.response.data.message : error.message,
     });
+  }
+};
+
+export const createReview = (productId, review) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: PRODUCT_REVIEW_CREATE_REQUEST });
+    const {
+      userSignin: { userInfo },
+    } = getState();
+
+    const { data } = await axios.post(backend_url + `/api/products/reviews/${productId}`, review, {
+      headers: { Authorization: `Bearer ${userInfo.token}` },
+    });
+
+    dispatch({
+      type: PRODUCT_REVIEW_CREATE_SUCCESS,
+      payload: data.review,
+    });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message ? error.response.data.message : error.message;
+    dispatch({ type: PRODUCT_REVIEW_CREATE_FAIL, payload: message });
   }
 };
