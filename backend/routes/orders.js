@@ -56,6 +56,7 @@ router.post(
         taxPrice: req.body.taxPrice,
         totalPrice: req.body.totalPrice,
         user: req.user._id,
+        // TODO: add location information, in models already added
       });
 
       const createdOrder = await order.save();

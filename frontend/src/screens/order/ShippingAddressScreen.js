@@ -14,12 +14,52 @@ export default function ShippingAddressScreen(props) {
   const [city, setCity] = useState(shippingAddress.city);
   const [postalCode, setPostalCode] = useState(shippingAddress.postalCode);
   const [country, setCountry] = useState(shippingAddress.country);
+
+  const [lat, setLat] = useState(shippingAddress.lat);
+  const [lng, setLng] = useState(shippingAddress.lng);
+  const { address: addressMap } = useSelector((state) => state.userAddressMap);
+
   const dispatch = useDispatch();
 
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(saveShippingAddress({ fullName, address, city, postalCode, country }));
-    props.history.push("/payment");
+    const newLat = addressMap ? addressMap.lat : lat;
+    const newLng = addressMap ? addressMap.lng : lng;
+    if (addressMap) {
+      setLat(addressMap.lat);
+      setLng(addressMap.lng);
+    }
+    let moveOn = true;
+    if (!newLat || !newLng) {
+      moveOn = window.confirm("You did not set your location on map. Continue?");
+    }
+    if (moveOn) {
+      dispatch(
+        saveShippingAddress({
+          fullName,
+          address,
+          city,
+          postalCode,
+          country,
+          lat: newLat,
+          lng: newLng,
+        })
+      );
+      props.history.push("/payment");
+    }
+  };
+
+  const chooseOnMap = () => {
+    saveShippingAddress({
+      fullName,
+      address,
+      city,
+      postalCode,
+      country,
+      lat,
+      lng,
+    });
+    props.history.push("/map");
   };
 
   return (
@@ -84,6 +124,14 @@ export default function ShippingAddressScreen(props) {
             required
           ></input>
         </div>
+
+        <div>
+          <label htmlFor="chooseOnMap">Location</label>
+          <button type="button" onClick={chooseOnMap}>
+            Choose On Map
+          </button>
+        </div>
+
         <div>
           <label />
           <button className="primary" type="submit">
